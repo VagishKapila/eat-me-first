@@ -14,7 +14,6 @@ export default defineConfig({
     },
   },
   preview: {
-    // Allow all hosts so Railway subdomains (*.up.railway.app) work
-    allowedHosts: 'all',
+    allowedHosts: true,
   },
 })

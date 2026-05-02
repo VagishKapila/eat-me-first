@@ -13,4 +13,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  preview: {
+    // Allow all hosts so Railway subdomains (*.up.railway.app) work
+    allowedHosts: 'all',
+  },
 })

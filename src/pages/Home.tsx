@@ -198,7 +198,7 @@ function HeroSection() {
             </Button>
             <Button
               asChild
-              variant="outline"
+              variant="ghost"
               size="lg"
               style={{
                 borderColor: 'var(--color-secondary)',
@@ -433,7 +433,7 @@ function ProductTrioSection() {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
-  const displayProducts = products.slice(0, 3)
+  const displayProducts = Object.values(products).slice(0, 3)
 
   return (
     <section
@@ -485,7 +485,7 @@ function ProductTrioSection() {
           }}
           className="product-grid"
         >
-          {displayProducts.map((product, index) => (
+          {displayProducts.map((product: import('@/types').Product, index: number) => (
             <ProductCard key={product.slug} product={product} delay={index * 0.12} />
           ))}
         </div>

@@ -302,7 +302,7 @@ export default function ProductDetail() {
                   color: GOLD,
                 }}
               >
-                Case of {product.caseCount ?? 6} — ${product.casePrice}
+                Case of {product.caseSize ?? 6} — ${product.casePrice}
               </span>
             )}
           </div>

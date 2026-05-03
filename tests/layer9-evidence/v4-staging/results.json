@@ -1,0 +1,136 @@
+{
+  "summary": {
+    "pass": 25,
+    "fail": 0,
+    "total": 25,
+    "timestamp": "2026-05-03T15:56:05.105Z",
+    "url": "https://web-staging-4dbc.up.railway.app"
+  },
+  "tests": [
+    {
+      "id": "T01",
+      "status": "PASS",
+      "detail": "HTTP 200 /"
+    },
+    {
+      "id": "T02",
+      "status": "PASS",
+      "detail": "title=\"Eat Me First — Real Fermented. Family Recipe.\""
+    },
+    {
+      "id": "T03",
+      "status": "PASS",
+      "detail": "body bg=\"rgb(255, 248, 238)\" ✓ cream"
+    },
+    {
+      "id": "T04",
+      "status": "PASS",
+      "detail": "H1=\"Snack smart.Sip smarter.\""
+    },
+    {
+      "id": "T05",
+      "status": "PASS",
+      "detail": "Wordmark in nav"
+    },
+    {
+      "id": "T06",
+      "status": "PASS",
+      "detail": "3 products: Kanji on My Mind, Sattu, but Sweet, Makhana"
+    },
+    {
+      "id": "T07",
+      "status": "PASS",
+      "detail": "/products/kanji 200"
+    },
+    {
+      "id": "T08",
+      "status": "PASS",
+      "detail": "/products/sattu 200"
+    },
+    {
+      "id": "T09",
+      "status": "PASS",
+      "detail": "/products/makhana 200"
+    },
+    {
+      "id": "T10",
+      "status": "PASS",
+      "detail": "/collections/all 200 + \"Pantry\""
+    },
+    {
+      "id": "T11",
+      "status": "PASS",
+      "detail": "/collections/drinks 200"
+    },
+    {
+      "id": "T12",
+      "status": "PASS",
+      "detail": "/collections/snacks 200"
+    },
+    {
+      "id": "T13",
+      "status": "PASS",
+      "detail": "/our-story 200 + \"sisters\" in content"
+    },
+    {
+      "id": "T14",
+      "status": "PASS",
+      "detail": "/contact 200"
+    },
+    {
+      "id": "T15",
+      "status": "PASS",
+      "detail": "/faq 200"
+    },
+    {
+      "id": "T16",
+      "status": "PASS",
+      "detail": "/why-ferment 200"
+    },
+    {
+      "id": "T17",
+      "status": "PASS",
+      "detail": "/shipping 200"
+    },
+    {
+      "id": "T18",
+      "status": "PASS",
+      "detail": "/wholesale 200"
+    },
+    {
+      "id": "T19",
+      "status": "PASS",
+      "detail": "404 page renders"
+    },
+    {
+      "id": "T20",
+      "status": "PASS",
+      "detail": "Kanji image loaded 640px"
+    },
+    {
+      "id": "T21",
+      "status": "PASS",
+      "detail": "No old v1 products"
+    },
+    {
+      "id": "T22",
+      "status": "PASS",
+      "detail": "v4 brand colors in bundle"
+    },
+    {
+      "id": "T23",
+      "status": "PASS",
+      "detail": "No horizontal overflow at 390px"
+    },
+    {
+      "id": "T24",
+      "status": "PASS",
+      "detail": "Footer has 18 links"
+    },
+    {
+      "id": "T25",
+      "status": "PASS",
+      "detail": "/collections/bundles 200"
+    }
+  ]
+}

@@ -37,9 +37,6 @@ export default function App() {
             <Route index element={<Home />} />
 
             {/* Product detail — 3 SKUs */}
-            <Route path="products/kanji"   element={<ProductDetail />} />
-            <Route path="products/sattu"   element={<ProductDetail />} />
-            <Route path="products/makhana" element={<ProductDetail />} />
             <Route path="products/:slug"   element={<ProductDetail />} />
 
             {/* Collections — 4 views */}

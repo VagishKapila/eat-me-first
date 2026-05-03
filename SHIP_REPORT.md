@@ -2,45 +2,58 @@
 
 ---
 
-## Session 0 — 2026-05-02 — V1 Scaffold
-
-### What Was Built
-Full V1 codebase for Eat Me First marketing site. All pages scaffolded with Cinematic Vitality design system, Framer Motion animations, TypeScript strict, Tailwind v4.
-
-### Files Created
-- `package.json`, `vite.config.ts`, `tsconfig.app.json`, `index.html`
-- `src/styles/globals.css` — Cinematic Vitality design tokens
-- `src/main.tsx`, `src/App.tsx`
-- `src/lib/utils.ts`
-- `src/types/index.ts`, `src/data/products.ts`
-- `src/components/layout/Navbar.tsx`
-- `src/components/layout/MobileMenu.tsx`
-- `src/components/layout/Footer.tsx`
-- `src/components/layout/RootLayout.tsx`
-- `src/components/ui/button.tsx`
-- `src/components/ui/dialog.tsx`
-- `src/pages/Home.tsx`
-- `src/pages/ProductDetail.tsx`
-- `src/pages/Collection.tsx`
-- `src/pages/OurStory.tsx`
-- `src/pages/Contact.tsx`
-- `src/pages/NotFound.tsx`
-- `BRAIN.md`, `SHIP_REPORT.md`, `README.md`
+## Session 0 — 2026-05-02 — V1 Scaffold (dark theme)
 
 ### Status
-- Code: COMPLETE
-- Deployed: NOT YET — needs GitHub repo + Railway project
-- Images: PLACEHOLDER — real images needed before launch
-- Layer 9: NOT RUN — no live URL yet
+- Code: ✅ COMPLETE
+- GitHub: ✅ https://github.com/VagishKapila/eat-me-first
+- Staging URL: ✅ https://web-staging-4dbc.up.railway.app — HTTP 200
+- Layer 9: ✅ 24/24 PASS
 
-### Infrastructure Needed Before Deploy
-1. Create GitHub repo `varshyl-inc/eat-me-first`
-2. Create Railway project "eat-me-first" with production + staging services
-3. Run `npm install && npm run build` to verify build passes
-4. Add real images to `public/images/`
-5. Update `BRAIN.md` with real domain and email addresses
+---
 
-### Open Questions for Vagish
-- Real product names confirmed with sister?
-- Domain name decided?
-- Founder names for Our Story?
+## Session 1 — 2026-05-03 — V4 Rebuild (cream/maroon/pink)
+
+### What Was Rebuilt
+Full V4 redesign from Vagish's approved v4.jsx prototype. New brand, new products,
+real photos, 19 routes.
+
+### Design System
+- Cream #FFF8EE background (replaces dark #121412)
+- Maroon #7A1F2B · Rose #E94B5C · Pink #FF3D7F brand palette
+- Bricolage Grotesque + Instrument Serif + Caveat fonts
+- Tailwind v4 @theme block (CSS-first)
+
+### Photos
+- 7 real product/lifestyle photos processed via Pillow
+- 3 widths (480/960/1440) × 2 formats (jpg/webp) = 42 images in public/images/
+- Sattu triptych cropped to left panel (760×1024)
+
+### Routes (19 + 404)
+| Route | Page |
+|-------|------|
+| / | Home (8 sections) |
+| /products/:slug | ProductDetail |
+| /collections/:type | Collection |
+| /our-story | OurStory |
+| /the-recipes | TheRecipes |
+| /where-we-source | WhereWeSource |
+| /why-ferment | WhyFerment |
+| /press | Press |
+| /contact | Contact (localStorage) |
+| /shipping | Shipping |
+| /subscriptions | Subscriptions |
+| /faq | FAQ |
+| /wholesale | Wholesale (localStorage) |
+| * | NotFound |
+
+### Build
+- tsc -b: ✅ exit 0
+- vite build: ✅ exit 0, 1.21s, 305KB main bundle
+
+### Still Needed
+1. Stripe payment links (placeholders in src/data/checkout.ts)
+2. Real founder names for OurStory copy
+3. Domain + Railway production env
+4. Email backend for contact/wholesale forms
+5. Layer 9 v4 tests (25 tests T01–T25)

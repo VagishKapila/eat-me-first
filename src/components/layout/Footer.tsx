@@ -1,251 +1,102 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { ArrowRight } from 'lucide-react'
 
-const shopLinks = [
-  { label: 'Kanji on My Mind', href: '/products/kanji' },
-  { label: 'Lemon Got Spice', href: '/products/lemon' },
-  { label: 'Craving the Masala', href: '/products/masala' },
-  { label: 'The Collection', href: '/collection' },
-]
-
-const heritageLinks = [
-  { label: 'Our Story', href: '/our-story' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Journal', href: '#journal' },
-]
-
-export default function Footer() {
-  const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Newsletter signup:', email)
-    setSubmitted(true)
-    setEmail('')
-  }
+export function Footer() {
+  const shopLinks = [
+    { href: '/products/kanji', label: 'Kanji on My Mind' },
+    { href: '/products/sattu', label: 'Sattu, but Sweet' },
+    { href: '/products/makhana', label: 'Makhana' },
+    { href: '/collections/bundles', label: 'Bundles' },
+  ]
+  const brandLinks = [
+    { href: '/our-story', label: 'Our Story' },
+    { href: '/the-recipes', label: 'The Recipes' },
+    { href: '/where-we-source', label: 'Where We Source' },
+    { href: '/press', label: 'Press' },
+  ]
+  const helpLinks = [
+    { href: '/contact', label: 'Contact' },
+    { href: '/shipping', label: 'Shipping' },
+    { href: '/subscriptions', label: 'Subscriptions' },
+    { href: '/faq', label: 'FAQ' },
+  ]
 
   return (
-    <footer
-      style={{
-        background: 'var(--color-surface-container-lowest)',
-        borderTop: '1px solid rgba(233,195,73,0.1)',
-      }}
-    >
-      {/* Main grid */}
-      <div
-        style={{
-          maxWidth: 'var(--max-w-site)',
-          marginInline: 'auto',
-          paddingInline: 'var(--spacing-edge-desktop)',
-          paddingBlock: '80px',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '48px',
-          }}
-          className="flex flex-col sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {/* Col 1: Brand */}
-          <div>
-            <p
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: 'var(--color-on-surface)',
-                marginBottom: '16px',
-              }}
+    <footer className="bg-[#FFF8EE] py-16 border-t border-black/5">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+        <div className="grid md:grid-cols-12 gap-10 mb-12">
+          <div className="md:col-span-5">
+            <Link
+              to="/"
+              className="text-[#1a1a1a] font-black tracking-tight text-3xl"
+              style={{ fontFamily: 'var(--font-sans)' }}
             >
-              EAT ME FIRST
+              eat me{' '}
+              <span style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontWeight: 400 }} className="text-[#E94B5C]">
+                first
+              </span>
+              .
+            </Link>
+            <p className="mt-4 text-[#3a3a3a] max-w-sm" style={{ fontFamily: 'var(--font-sans)' }}>
+              Real fermented drinks and clean snacks. Made by sisters, by hand, by recipe.
             </p>
-            <p
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.8125rem',
-                fontWeight: 300,
-                color: 'var(--color-on-surface-variant)',
-                lineHeight: 1.6,
-                maxWidth: '240px',
-              }}
-            >
-              Sacred science for the modern aesthete.
-            </p>
-            <p
-              style={{
-                marginTop: '32px',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.75rem',
-                color: 'var(--color-outline)',
-              }}
-            >
-              © 2025 Eat Me First
-            </p>
+            <div className="mt-6 flex flex-wrap gap-3" style={{ fontFamily: 'var(--font-sans)' }}>
+              <a
+                href="https://instagram.com/eatmefirst"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#E8E1FF] text-[#4A1A5C] px-3 py-1.5 rounded-full text-xs font-bold hover:bg-[#7C4DFF] hover:text-white transition-colors"
+              >
+                @eatmefirst
+              </a>
+              <a
+                href="https://tiktok.com/@eatmefirst"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#FFD4D9] text-[#7A1F2B] px-3 py-1.5 rounded-full text-xs font-bold hover:bg-[#E94B5C] hover:text-white transition-colors"
+              >
+                tiktok / @eatmefirst
+              </a>
+            </div>
           </div>
 
-          {/* Col 2: Shop */}
-          <div>
-            <p className="eyebrow" style={{ marginBottom: '24px' }}>Shop</p>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {shopLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.875rem',
-                      fontWeight: 300,
-                      color: 'var(--color-on-surface-variant)',
-                      textDecoration: 'none',
-                      transition: 'color 0.2s ease',
-                    }}
-                    className="hover:!text-white"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 3: Heritage */}
-          <div>
-            <p className="eyebrow" style={{ marginBottom: '24px' }}>Heritage</p>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {heritageLinks.map((link) => (
-                <li key={link.href}>
-                  {link.href.startsWith('#') ? (
-                    <a
-                      href={link.href}
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.875rem',
-                        fontWeight: 300,
-                        color: 'var(--color-on-surface-variant)',
-                        textDecoration: 'none',
-                        transition: 'color 0.2s ease',
-                      }}
-                    >
-                      {link.label}
-                    </a>
-                  ) : (
-                    <Link
-                      to={link.href}
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.875rem',
-                        fontWeight: 300,
-                        color: 'var(--color-on-surface-variant)',
-                        textDecoration: 'none',
-                        transition: 'color 0.2s ease',
-                      }}
-                      className="hover:!text-white"
-                    >
-                      {link.label}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 4: Newsletter */}
-          <div>
-            <p className="eyebrow" style={{ marginBottom: '8px' }}>Join the Archive</p>
-            <p
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.8125rem',
-                fontWeight: 300,
-                color: 'var(--color-on-surface-variant)',
-                marginBottom: '20px',
-                lineHeight: 1.5,
-              }}
-            >
-              Recipes, rituals, and early access to new formulas.
-            </p>
-            {submitted ? (
-              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.8125rem', color: 'var(--color-secondary)' }}>
-                You're on the list.
-              </p>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit}>
-                <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(233,195,73,0.4)' }}>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    required
-                    aria-label="Email for newsletter"
-                    style={{
-                      flex: 1,
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.875rem',
-                      color: 'var(--color-on-surface)',
-                      paddingBlock: '8px',
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    aria-label="Subscribe to newsletter"
-                    style={{ color: 'var(--color-secondary)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '8px' }}
-                  >
-                    <ArrowRight size={18} />
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom strip */}
-      <div
-        style={{
-          borderTop: '1px solid rgba(255,255,255,0.05)',
-          paddingBlock: '20px',
-          paddingInline: 'var(--spacing-edge-desktop)',
-          maxWidth: 'var(--max-w-site)',
-          marginInline: 'auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '24px' }}>
           {[
-            { label: 'Privacy Policy', href: '#privacy' },
-            { label: 'Terms of Use', href: '#terms' },
-          ].map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.75rem',
-                color: 'var(--color-outline)',
-                textDecoration: 'none',
-              }}
-            >
-              {link.label}
-            </a>
+            ['Shop', shopLinks],
+            ['Brand', brandLinks],
+            ['Help', helpLinks],
+          ].map(([title, items]) => (
+            <div key={title as string} className="md:col-span-2">
+              <div
+                className="text-xs font-black tracking-[0.2em] text-[#1a1a1a] uppercase mb-4"
+                style={{ fontFamily: 'var(--font-sans)' }}
+              >
+                {title as string}
+              </div>
+              <ul className="space-y-2.5">
+                {(items as { href: string; label: string }[]).map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      to={item.href}
+                      className="text-[#3a3a3a] text-sm hover:text-[#E94B5C] font-medium transition-colors"
+                      style={{ fontFamily: 'var(--font-sans)' }}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
+          <div className="md:col-span-1" />
         </div>
-        <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.75rem', color: 'var(--color-outline)' }}>
-          Crafted in California
-        </p>
+
+        <div className="border-t border-black/10 pt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-[#3a3a3a]" style={{ fontFamily: 'var(--font-sans)' }}>
+          <div>© 2026 Eat Me First · Crafted in California</div>
+          <div className="flex gap-5">
+            <Link to="/faq" className="hover:text-[#1a1a1a] transition-colors">Privacy</Link>
+            <Link to="/faq" className="hover:text-[#1a1a1a] transition-colors">Terms</Link>
+            <Link to="/contact" className="hover:text-[#1a1a1a] transition-colors">Accessibility</Link>
+          </div>
+        </div>
       </div>
     </footer>
   )

@@ -1,22 +1,29 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 
-export default function NotFound() {
+export function NotFound() {
   return (
-    <div style={{ background: 'var(--color-surface)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingInline: 'var(--spacing-edge-desktop)', textAlign: 'center' }}>
-      <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-        <p className="eyebrow" style={{ marginBottom: '24px' }}>404</p>
-        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 6vw, 64px)', color: 'var(--color-on-surface)', marginBottom: '16px' }}>
-          This ritual doesn't exist.
+    <main className="pt-28 pb-20 bg-[#FFF8EE] min-h-screen flex items-center justify-center">
+      <div className="text-center px-6">
+        <div className="text-8xl mb-6">🫙</div>
+        <h1
+          className="text-[#1a1a1a] font-black tracking-tight mb-4"
+          style={{ fontFamily: 'var(--font-sans)', fontSize: 'clamp(40px, 6vw, 80px)' }}
+        >
+          404 — Empty jar.
         </h1>
-        <p style={{ fontFamily: 'var(--font-sans)', fontStyle: 'italic', fontSize: '1rem', color: 'var(--color-on-surface-variant)', marginBottom: '40px' }}>
-          The page you're looking for has wandered off.
+        <p className="text-[#3a3a3a] text-lg mb-8" style={{ fontFamily: 'var(--font-sans)' }}>
+          This page doesn't exist. But the pantry does.
         </p>
-        <Button variant="ivory" size="lg" asChild>
-          <Link to="/collection">Return to the Collection</Link>
-        </Button>
-      </motion.div>
-    </div>
+        <Link
+          to="/"
+          className="bg-[#1a1a1a] text-white px-8 py-4 rounded-full font-black hover:bg-[#E94B5C] transition-colors inline-block"
+          style={{ fontFamily: 'var(--font-sans)' }}
+        >
+          Go home →
+        </Link>
+      </div>
+    </main>
   )
 }
+
+export default NotFound

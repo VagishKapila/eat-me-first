@@ -1,974 +1,150 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import {
-  Brain, Sun, Shield, Moon, Flame, Zap, Droplets, Wind,
-  Leaf, Heart, Sparkles, Anchor, Plus, Minus, ArrowLeft,
-  ArrowRight,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog'
-import { getProduct } from '@/data/products'
+import { useParams, Link, useOutletContext } from 'react-router-dom'
+import { ArrowUpRight, ArrowLeft } from 'lucide-react'
+import { getProduct, PRODUCTS } from '@/data/products'
+import { Sticker } from '@/components/ui/Sticker'
+import { Reveal } from '@/components/ui/Reveal'
+import { ProductCard } from '@/components/sections/ProductCard'
+import { NotFound } from './NotFound'
 import type { Product } from '@/types'
 
-// ---------------------------------------------------------------------------
-// Icon map
-// ---------------------------------------------------------------------------
-const iconMap: Record<string, React.ComponentType<{ size?: number; strokeWidth?: number }>> = {
-  Brain,
-  Sun,
-  Shield,
-  Moon,
-  Flame,
-  Zap,
-  Droplets,
-  Wind,
-  Leaf,
-  Heart,
-  Sparkles,
-  Anchor,
+interface OutletCtx {
+  onShop: (product?: Product) => void
 }
 
-// ---------------------------------------------------------------------------
-// Inline style helpers
-// ---------------------------------------------------------------------------
-const GOLD = 'var(--color-secondary)'
-const FONT_SERIF = '"Noto Serif", Georgia, serif'
-const FONT_SANS = '"Manrope", system-ui, sans-serif'
-
-// ---------------------------------------------------------------------------
-// Framer Motion variants
-// ---------------------------------------------------------------------------
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.12 },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } },
-}
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-}
-
-// ---------------------------------------------------------------------------
-// ProductDetail
-// ---------------------------------------------------------------------------
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const navigate = useNavigate()
+  const { onShop } = useOutletContext<OutletCtx>()
+  const product = getProduct(slug ?? '')
+  const others = PRODUCTS.filter((p) => p.slug !== slug).slice(0, 2)
 
-  const product: Product | undefined = getProduct(slug ?? '')
+  if (!product) return <NotFound />
 
-  // --- ATC dialog state ---
-  const [atcOpen, setAtcOpen] = useState(false)
-  const [atcEmail, setAtcEmail] = useState('')
-  const [atcSubmitted, setAtcSubmitted] = useState(false)
-
-  // --- Quantity ---
-  const [quantity, setQuantity] = useState(1)
-
-  // --- Sticky mobile CTA bar ---
-  const [showMobileBar, setShowMobileBar] = useState(false)
-
-  // --- Scroll listener for mobile bar ---
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowMobileBar(window.scrollY > 400)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // --- Meta ---
-  useEffect(() => {
-    if (!product) return
-    document.title = `${product.name} — Eat Me First`
-    const metaDesc = document.querySelector('meta[name="description"]')
-    if (metaDesc) metaDesc.setAttribute('content', product.tagline)
-  }, [product])
-
-  // --- ATC submit ---
-  const handleAtcSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: wire to email capture API
-    setAtcSubmitted(true)
-  }
-
-  // --- Smooth scroll to story ---
-  const scrollToStory = () => {
-    const el = document.getElementById('story')
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
-  // --- Quantity helpers ---
-  const decrement = () => setQuantity(q => Math.max(1, q - 1))
-  const increment = () => setQuantity(q => Math.min(12, q + 1))
-
-  // ---------------------------------------------------------------------------
-  // 404 state
-  // ---------------------------------------------------------------------------
-  if (!product) {
-    return (
-      <div
-        style={{
-          minHeight: '80vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '24px',
-          background: 'var(--color-surface)',
-          padding: '48px var(--spacing-edge-mobile)',
-        }}
-      >
-        <p
-          style={{
-            fontFamily: FONT_SERIF,
-            fontSize: '1.5rem',
-            color: 'var(--color-on-surface)',
-            textAlign: 'center',
-          }}
-        >
-          We couldn't find that product.
-        </p>
-        <Button
-          variant="gold"
-          size="md"
-          onClick={() => navigate('/shop')}
-        >
-          Back to Shop
-        </Button>
-      </div>
-    )
-  }
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
   return (
-    <>
-      {/* ------------------------------------------------------------------ */}
-      {/* BACK NAV */}
-      {/* ------------------------------------------------------------------ */}
-      <div
-        style={{
-          maxWidth: 'var(--max-w-site)',
-          margin: '0 auto',
-          padding: '32px var(--spacing-edge-desktop) 0',
-        }}
-      >
-        <Link
-          to="/shop"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontFamily: FONT_SANS,
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--color-on-surface-variant)',
-            textDecoration: 'none',
-          }}
-        >
-          <ArrowLeft size={14} strokeWidth={1.5} />
-          Back to Shop
-        </Link>
-      </div>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SECTION 1 — HERO SPLIT */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        style={{
-          maxWidth: 'var(--max-w-site)',
-          margin: '0 auto',
-          padding: '48px var(--spacing-edge-desktop) var(--spacing-section-desktop)',
-          display: 'grid',
-          gridTemplateColumns: '60fr 40fr',
-          gap: '64px',
-          alignItems: 'start',
-        }}
-        className="product-hero"
-      >
-        {/* LEFT — Image */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-        >
-          <img
-            src={product.heroImage}
-            alt={product.name}
-            style={{
-              width: '100%',
-              aspectRatio: '4 / 5',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-          />
-        </motion.div>
-
-        {/* RIGHT — Sticky Info Panel */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          style={{
-            position: 'sticky',
-            top: '100px',
-            padding: '48px',
-            maxWidth: '560px',
-          }}
-          className="product-info-panel"
-        >
-          {/* Eyebrow */}
-          <p
-            style={{
-              fontFamily: FONT_SANS,
-              fontSize: '0.6875rem',
-              fontWeight: 600,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: GOLD,
-              marginBottom: '16px',
-            }}
+    <main className="pt-24 pb-20 bg-[#FFF8EE]">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+        {/* Breadcrumb */}
+        <div className="mb-8">
+          <Link
+            to="/collections/all"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#3a3a3a] hover:text-[#E94B5C] transition-colors"
+            style={{ fontFamily: 'var(--font-sans)' }}
           >
-            {product.eyebrow}
-          </p>
+            <ArrowLeft size={16} /> All Products
+          </Link>
+        </div>
 
-          {/* H1 */}
-          <h1
-            style={{
-              fontFamily: FONT_SERIF,
-              fontSize: 'clamp(2.5rem, 4vw, 3.5rem)',
-              fontWeight: 400,
-              color: 'var(--color-on-surface)',
-              lineHeight: 1.1,
-              margin: '0 0 28px',
-            }}
-          >
-            {product.name}
-          </h1>
-
-          {/* Price Row */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px',
-              marginBottom: '28px',
-            }}
-          >
-            <span
-              style={{
-                fontFamily: FONT_SERIF,
-                fontSize: '2rem',
-                fontWeight: 400,
-                color: 'var(--color-on-surface)',
-              }}
-            >
-              ${product.price}
-            </span>
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          {/* Image */}
+          <div className="lg:col-span-6">
             <div
-              style={{
-                width: '1px',
-                height: '32px',
-                background: GOLD,
-                opacity: 0.4,
-              }}
-            />
-            {product.casePrice && (
-              <span
-                style={{
-                  fontFamily: FONT_SANS,
-                  fontSize: '0.75rem',
-                  fontWeight: 400,
-                  letterSpacing: '0.06em',
-                  textTransform: 'uppercase',
-                  color: GOLD,
-                }}
+              className="relative rounded-[32px] overflow-hidden aspect-square"
+              style={{ background: product.bgColor }}
+            >
+              <Sticker color={product.chipColor} rotate={-4} className="absolute top-6 left-6 z-10">
+                {product.sticker}
+              </Sticker>
+              <img
+                src={product.imageSrc}
+                srcSet={product.imageSrcSet}
+                sizes="(max-width: 1024px) 90vw, 50vw"
+                alt={product.name}
+                className="w-full h-full object-cover"
+                style={{ objectPosition: product.slug === 'sattu' ? '50% 35%' : 'center' }}
+                width="800"
+                height="800"
+              />
+            </div>
+          </div>
+
+          {/* Info */}
+          <div className="lg:col-span-6 lg:sticky lg:top-28">
+            <Reveal>
+              <div
+                className="text-xs font-black tracking-widest mb-3"
+                style={{ fontFamily: 'var(--font-sans)', color: product.chipColor }}
               >
-                Case of {product.caseSize ?? 6} — ${product.casePrice}
-              </span>
-            )}
+                {product.flavor}
+              </div>
+              <h1
+                className="text-[#1a1a1a] font-black tracking-tight leading-[0.92] mb-4"
+                style={{ fontFamily: 'var(--font-sans)', fontSize: 'clamp(36px, 5vw, 72px)' }}
+              >
+                {product.name}
+              </h1>
+              <p className="text-[#3a3a3a] text-lg leading-relaxed mb-6" style={{ fontFamily: 'var(--font-sans)' }}>
+                {product.body}
+              </p>
+              <div
+                className="inline-flex flex-wrap gap-2 mb-8 text-sm text-[#3a3a3a] font-medium"
+                style={{ fontFamily: 'var(--font-sans)' }}
+              >
+                {product.pour.split(' · ').map((ing) => (
+                  <span key={ing} className="bg-white border border-black/10 px-3 py-1 rounded-full">
+                    {ing}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal delay={120}>
+              <div className="bg-white border border-black/10 rounded-[24px] p-6 mb-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="font-black text-[#1a1a1a] text-lg" style={{ fontFamily: 'var(--font-sans)' }}>Single</div>
+                    <div className="text-sm text-[#3a3a3a]" style={{ fontFamily: 'var(--font-sans)' }}>Try it once</div>
+                  </div>
+                  <div className="text-3xl font-black text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>${product.price}</div>
+                </div>
+              </div>
+              <div className="bg-white border border-black/10 rounded-[24px] p-6 mb-8">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="font-black text-[#1a1a1a] text-lg flex items-center gap-2" style={{ fontFamily: 'var(--font-sans)' }}>
+                      Case of {product.caseSize}
+                      <span className="bg-[#E94B5C] text-white text-xs px-2 py-0.5 rounded-full">SAVE</span>
+                    </div>
+                    <div className="text-sm text-[#3a3a3a]" style={{ fontFamily: 'var(--font-sans)' }}>Four-week ritual supply</div>
+                  </div>
+                  <div className="text-3xl font-black text-[#1a1a1a]" style={{ fontFamily: 'var(--font-sans)' }}>${product.casePrice}</div>
+                </div>
+              </div>
+
+              {/* Sticky mobile CTA */}
+              <button
+                onClick={() => onShop(product)}
+                className="w-full bg-[#1a1a1a] text-white py-4 rounded-full font-black text-lg flex items-center justify-center gap-3 hover:bg-[#E94B5C] transition-colors shadow-lg"
+                style={{ fontFamily: 'var(--font-sans)' }}
+              >
+                Add to Order <ArrowUpRight size={20} />
+              </button>
+              <p className="text-center text-xs text-[#3a3a3a] mt-3" style={{ fontFamily: 'var(--font-sans)' }}>
+                🔒 Secure checkout · Free shipping over $60
+              </p>
+            </Reveal>
           </div>
+        </div>
 
-          {/* Tagline */}
-          <p
-            style={{
-              fontFamily: FONT_SERIF,
-              fontStyle: 'italic',
-              fontSize: '1.125rem',
-              lineHeight: 1.6,
-              color: 'var(--color-on-surface-variant)',
-              maxWidth: '380px',
-              marginBottom: '40px',
-            }}
-          >
-            {product.tagline}
-          </p>
-
-          {/* Quantity Stepper */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0',
-              marginBottom: '24px',
-              border: '1px solid rgba(233,195,73,0.3)',
-              borderRadius: '0',
-              width: 'fit-content',
-            }}
-          >
-            <button
-              onClick={decrement}
-              aria-label="Decrease quantity"
-              style={{
-                width: '44px',
-                height: '44px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--color-on-surface)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: quantity <= 1 ? 0.3 : 1,
-                transition: 'opacity 0.2s',
-              }}
-            >
-              <Minus size={14} strokeWidth={1.5} />
-            </button>
-            <span
-              style={{
-                width: '48px',
-                textAlign: 'center',
-                fontFamily: FONT_SANS,
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: 'var(--color-on-surface)',
-                borderLeft: '1px solid rgba(233,195,73,0.3)',
-                borderRight: '1px solid rgba(233,195,73,0.3)',
-                height: '44px',
-                lineHeight: '44px',
-              }}
-            >
-              {quantity}
-            </span>
-            <button
-              onClick={increment}
-              aria-label="Increase quantity"
-              style={{
-                width: '44px',
-                height: '44px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--color-on-surface)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: quantity >= 12 ? 0.3 : 1,
-                transition: 'opacity 0.2s',
-              }}
-            >
-              <Plus size={14} strokeWidth={1.5} />
-            </button>
-          </div>
-
-          {/* CTA Buttons */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              marginBottom: '32px',
-            }}
-          >
-            <Button
-              variant="ivory"
-              size="full"
-              onClick={() => setAtcOpen(true)}
-            >
-              ADD TO COLLECTION
-            </Button>
-            <Button
-              variant="gold"
-              size="full"
-              onClick={scrollToStory}
-            >
-              THE SOURCING STORY
-            </Button>
-          </div>
-
-          {/* Badge Row */}
-          {product.badges && product.badges.length > 0 && (
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '8px',
-              }}
-            >
-              {product.badges.map((badge: string) => (
-                <span
-                  key={badge}
-                  style={{
-                    fontFamily: FONT_SANS,
-                    fontSize: '0.625rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    color: 'var(--color-on-surface-variant)',
-                    background: 'var(--color-surface-container-high)',
-                    borderTop: '1px solid rgba(233,195,73,0.2)',
-                    padding: '6px 12px',
-                  }}
-                >
-                  {badge}
-                </span>
+        {/* Related */}
+        {others.length > 0 && (
+          <section className="mt-24">
+            <Reveal>
+              <h2
+                className="text-3xl font-black text-[#1a1a1a] mb-10 tracking-tight"
+                style={{ fontFamily: 'var(--font-sans)' }}
+              >
+                Also in the pantry
+              </h2>
+            </Reveal>
+            <div className="grid md:grid-cols-2 gap-6">
+              {others.map((p, i) => (
+                <Reveal key={p.slug} delay={i * 100}>
+                  <ProductCard product={p} onBuy={onShop} />
+                </Reveal>
               ))}
             </div>
-          )}
-        </motion.div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SECTION 2 — THE SCIENCE OF GRACE (Pillars) */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        id="pillars"
-        style={{
-          background: 'var(--color-surface-container-low)',
-          padding: 'var(--spacing-section-desktop) var(--spacing-edge-desktop)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 'var(--max-w-site)',
-            margin: '0 auto',
-          }}
-        >
-          {/* Header */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            variants={fadeUp}
-            style={{ textAlign: 'center', marginBottom: '72px' }}
-          >
-            <p
-              style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: GOLD,
-                marginBottom: '20px',
-              }}
-            >
-              THE SCIENCE OF GRACE
-            </p>
-            <h2
-              style={{
-                fontFamily: FONT_SERIF,
-                fontSize: 'clamp(2rem, 3.5vw, 3rem)',
-                fontWeight: 400,
-                color: 'var(--color-on-surface)',
-                margin: '0 0 20px',
-              }}
-            >
-              The Formula
-            </h2>
-            <p
-              style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: 'var(--color-on-surface-variant)',
-                maxWidth: '640px',
-                margin: '0 auto',
-                lineHeight: 1.6,
-              }}
-            >
-              Four principles. One formulation philosophy.
-            </p>
-          </motion.div>
-
-          {/* Pillars Grid */}
-          {product.pillars && product.pillars.length > 0 && (
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              variants={containerVariants}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '48px',
-              }}
-              className="pillars-grid"
-            >
-              {product.pillars.map(
-                (pillar: { icon: string; title: string; body: string }) => {
-                  const IconComponent = iconMap[pillar.icon] ?? Leaf
-                  return (
-                    <motion.div key={pillar.title} variants={itemVariants}>
-                      {/* Icon Container */}
-                      <div
-                        style={{
-                          width: '64px',
-                          height: '64px',
-                          background: 'var(--color-surface-container-high)',
-                          border: '1px solid var(--color-outline)',
-                          borderRadius: '0',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginBottom: '0',
-                        }}
-                      >
-                        <IconComponent
-                          size={28}
-                          strokeWidth={1.25}
-                          // @ts-ignore — inline style on SVG element
-                          style={{ color: GOLD }}
-                        />
-                      </div>
-
-                      {/* Title */}
-                      <p
-                        style={{
-                          fontFamily: FONT_SANS,
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          letterSpacing: '0.1em',
-                          textTransform: 'uppercase',
-                          color: GOLD,
-                          marginTop: '16px',
-                          marginBottom: '12px',
-                        }}
-                      >
-                        {pillar.title}
-                      </p>
-
-                      {/* Body */}
-                      <p
-                        style={{
-                          fontFamily: FONT_SANS,
-                          fontSize: '0.875rem',
-                          fontWeight: 300,
-                          color: 'var(--color-on-surface-variant)',
-                          lineHeight: 1.6,
-                          margin: 0,
-                        }}
-                      >
-                        {pillar.body}
-                      </p>
-                    </motion.div>
-                  )
-                },
-              )}
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SECTION 3 — SOURCING STORY */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        id="story"
-        style={{
-          padding: 'var(--spacing-section-desktop) var(--spacing-edge-desktop)',
-          background: 'var(--color-surface)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 'var(--max-w-site)',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '80px',
-            alignItems: 'center',
-          }}
-          className="story-grid"
-        >
-          {/* Left — Story Image */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            variants={fadeUp}
-          >
-            <img
-              src={product.storyImage}
-              alt="sourcing story"
-              style={{
-                width: '100%',
-                aspectRatio: '1 / 1',
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
-          </motion.div>
-
-          {/* Right — Story Text */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            variants={fadeUp}
-          >
-            {/* Eyebrow */}
-            <p
-              style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: GOLD,
-                marginBottom: '20px',
-              }}
-            >
-              THE SOURCE
-            </p>
-
-            {/* Italic Title */}
-            <h2
-              style={{
-                fontFamily: FONT_SERIF,
-                fontStyle: 'italic',
-                fontSize: 'clamp(1.5rem, 2.5vw, 1.875rem)',
-                fontWeight: 400,
-                color: 'var(--color-on-surface)',
-                maxWidth: '480px',
-                margin: '0 0 28px',
-                lineHeight: 1.35,
-              }}
-            >
-              {product.storyTitle}
-            </h2>
-
-            {/* Body */}
-            <p
-              style={{
-                fontFamily: FONT_SANS,
-                fontSize: '1rem',
-                fontWeight: 300,
-                color: 'var(--color-on-surface-variant)',
-                lineHeight: 1.7,
-                maxWidth: '480px',
-                margin: '0 0 36px',
-              }}
-            >
-              {product.storyBody}
-            </p>
-
-            {/* Provenance Link */}
-            <Link
-              to="/our-story"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontFamily: FONT_SANS,
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: GOLD,
-                textDecoration: 'none',
-              }}
-            >
-              EXPLORE OUR PROVENANCE
-              <ArrowRight size={14} strokeWidth={1.5} />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SECTION 4 — TRUST SIGNALS */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        style={{
-          background: 'var(--color-surface-container-low)',
-          padding: '64px var(--spacing-edge-desktop)',
-        }}
-      >
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '16px',
-            maxWidth: 'var(--max-w-site)',
-            margin: '0 auto',
-          }}
-        >
-          {['Made in California', 'Small Batch', 'Family Recipe', '30-Day Promise'].map(
-            (item, i, arr) => (
-              <span
-                key={item}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '16px',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: FONT_SANS,
-                    fontSize: '0.6875rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: 'var(--color-on-surface-variant)',
-                  }}
-                >
-                  {item}
-                </span>
-                {i < arr.length - 1 && (
-                  <span
-                    style={{
-                      width: '4px',
-                      height: '4px',
-                      borderRadius: '50%',
-                      background: GOLD,
-                      opacity: 0.6,
-                      display: 'inline-block',
-                      flexShrink: 0,
-                    }}
-                  />
-                )}
-              </span>
-            ),
-          )}
-        </motion.div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SECTION 5 — FINAL CTA */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        style={{
-          padding: '128px var(--spacing-edge-desktop)',
-          textAlign: 'center',
-          background: 'var(--color-surface)',
-        }}
-      >
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={fadeUp}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '40px',
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: FONT_SERIF,
-              fontSize: 'clamp(2rem, 3vw, 2.75rem)',
-              fontWeight: 400,
-              color: 'var(--color-on-surface)',
-              margin: 0,
-              lineHeight: 1.15,
-            }}
-          >
-            Begin the {product.name} Ritual.
-          </h2>
-          <Button
-            variant="ivory"
-            size="xl"
-            onClick={() => setAtcOpen(true)}
-          >
-            ADD TO COLLECTION
-          </Button>
-        </motion.div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* ATC DIALOG */}
-      {/* ------------------------------------------------------------------ */}
-      <Dialog open={atcOpen} onOpenChange={setAtcOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>You're early.</DialogTitle>
-            <DialogDescription>
-              We launch in spring 2026. Drop your email and we'll save you the
-              first batch.
-            </DialogDescription>
-          </DialogHeader>
-          {atcSubmitted ? (
-            <p
-              style={{
-                color: GOLD,
-                fontFamily: FONT_SANS,
-                fontSize: '0.875rem',
-                marginTop: '16px',
-                lineHeight: 1.6,
-              }}
-            >
-              You're on the list. We'll reach out before anyone else.
-            </p>
-          ) : (
-            <form
-              onSubmit={handleAtcSubmit}
-              style={{
-                marginTop: '24px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-              }}
-            >
-              <input
-                type="email"
-                required
-                placeholder="your@email.com"
-                value={atcEmail}
-                onChange={e => setAtcEmail(e.target.value)}
-                aria-label="Email address"
-                style={{
-                  background: 'var(--color-surface)',
-                  border: 'none',
-                  borderBottom: '1px solid rgba(233,195,73,0.4)',
-                  color: 'var(--color-on-surface)',
-                  fontFamily: FONT_SANS,
-                  padding: '12px 0',
-                  outline: 'none',
-                  fontSize: '0.875rem',
-                  width: '100%',
-                }}
-              />
-              <Button type="submit" variant="ivory" size="md">
-                SAVE MY SPOT
-              </Button>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* STICKY MOBILE CTA BAR (< 1024px) */}
-      {/* ------------------------------------------------------------------ */}
-      {showMobileBar && !atcOpen && (
-        <div
-          className="mobile-cta-bar"
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            background: 'var(--color-surface-container-high)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            borderTop: '1px solid rgba(233,195,73,1)',
-            padding: '14px var(--spacing-edge-mobile)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          {/* Left */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            <span
-              style={{
-                fontFamily: FONT_SANS,
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: 'var(--color-on-surface)',
-              }}
-            >
-              {product.name}
-            </span>
-            <span
-              style={{
-                fontFamily: FONT_SERIF,
-                fontSize: '1.125rem',
-                fontWeight: 400,
-                color: 'var(--color-on-surface)',
-              }}
-            >
-              ${product.price}
-            </span>
-          </div>
-
-          {/* Right */}
-          <Button
-            variant="ivory"
-            size="sm"
-            onClick={() => setAtcOpen(true)}
-          >
-            ADD
-          </Button>
-        </div>
-      )}
-
-      {/* ------------------------------------------------------------------ */}
-      {/* RESPONSIVE STYLES (injected as a style tag) */}
-      {/* ------------------------------------------------------------------ */}
-      <style>{`
-        @media (max-width: 1023px) {
-          .product-hero {
-            grid-template-columns: 1fr !important;
-            gap: 0 !important;
-            padding: 32px var(--spacing-edge-mobile) 80px !important;
-          }
-          .product-info-panel {
-            position: static !important;
-            padding: 32px 0 !important;
-            max-width: 100% !important;
-          }
-          .pillars-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 40px !important;
-          }
-          .story-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
-        }
-        @media (max-width: 639px) {
-          .pillars-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        @media (min-width: 1024px) {
-          .mobile-cta-bar {
-            display: none !important;
-          }
-        }
-      `}</style>
-    </>
+          </section>
+        )}
+      </div>
+    </main>
   )
 }
